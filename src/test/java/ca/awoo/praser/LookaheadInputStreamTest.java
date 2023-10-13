@@ -21,7 +21,7 @@ public class LookaheadInputStreamTest {
      * Asserts that the second call to {@link LookaheadInputStream#peek(int)} with an offset of 0 returns 0x02, with an offset of 1 returns 0x03, etc.
      * Continue to read and assert peeks are correct until the end of the stream is reached.
      * </p>
-     * @throws Exception if an exception occures while running the test. This of course indicates a failure.
+     * @throws Exception if an exception occures while running the test
      */
     @Test
     public void testPeek() throws Exception {
@@ -51,7 +51,7 @@ public class LookaheadInputStreamTest {
     /**
      * Tests {@link LookaheadInputStream#peek()} with a read before the first peek.
      * Here in case creating the buffer in {@link LookaheadInputStream#read()} is a problem.
-     * @throws Exception if an exception occures while running the test. This of course indicates a failure.
+     * @throws Exception if an exception occures while running the test
      */
     @Test
     public void readBeforePeek() throws Exception {
@@ -67,7 +67,7 @@ public class LookaheadInputStreamTest {
     /**
      * Tests {@link LookaheadInputStream#peek()} with a read beyond the end of the stream.
      * Peeking beyond the end of the stream should return -1.
-     * @throws Exception if an exception occures while running the test. This of course indicates a failure.
+     * @throws Exception if an exception occures while running the test
      */
     @Test
     public void readBeyondEnd() throws Exception {
@@ -85,7 +85,7 @@ public class LookaheadInputStreamTest {
 
     /**
      * Tests {@link LookaheadInputStream#read(byte[], int, int)} to ensure we didn't break it.
-     * @throws Exception if an exception occures while running the test. This of course indicates a failure.
+     * @throws Exception if an exception occures while running the test
      */
     @Test
     public void readBuffer() throws Exception {
