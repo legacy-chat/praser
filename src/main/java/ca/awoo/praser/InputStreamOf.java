@@ -16,7 +16,14 @@ public abstract class InputStreamOf<T> {
     public T peek() throws StreamException {
         if (buffer == null) {
             buffer = new ArrayList<T>();
-            buffer.add(readStream());
+            if(!buffer.add(readStream())){
+                return null;
+            }
+        }
+        if(buffer.isEmpty()){
+            if(!buffer.add(readStream())){
+                return null;
+            }
         }
         return buffer.get(0);
     }
