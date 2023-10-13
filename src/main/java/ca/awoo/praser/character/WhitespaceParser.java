@@ -29,7 +29,8 @@ public class WhitespaceParser extends Parser<Character, String> {
             new SingleCharacterParser(' '),
             new SingleCharacterParser('\t'),
             new SingleCharacterParser('\n'),
-            new SingleCharacterParser('\r')
+            new SingleCharacterParser('\r'),
+            new SingleCharacterParser('\f')
         );
         parser = new ZeroOrMoreParser<Character, Character>(singleParser);
     }
