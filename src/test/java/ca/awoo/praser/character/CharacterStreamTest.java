@@ -1,4 +1,4 @@
-package ca.awoo.praser;
+package ca.awoo.praser.character;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,7 +6,7 @@ import java.io.ByteArrayInputStream;
 
 import org.junit.Test;
 
-import ca.awoo.praser.character.CharacterStream;
+import ca.awoo.praser.InputStreamOf;
 
 /**
  * Unit tests for {@link CharacterStream}.

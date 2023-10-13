@@ -1,4 +1,4 @@
-package ca.awoo.praser;
+package ca.awoo.praser.parsers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -8,9 +8,10 @@ import java.util.Collection;
 
 import org.junit.Test;
 
+import ca.awoo.praser.InputStreamOf;
+import ca.awoo.praser.Parser;
 import ca.awoo.praser.Parser.Match;
 import ca.awoo.praser.character.*;
-import ca.awoo.praser.parsers.*;
 
 /**
  * Unit tests for {@link ZeroOrMoreParser}.
