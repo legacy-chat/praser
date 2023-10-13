@@ -8,7 +8,7 @@ import ca.awoo.praser.StreamException;
 /**
  * A {@link Parser} that matches an exact string.
  */
-public class StringParser implements Parser<Character, String> {
+public class StringParser extends Parser<Character, String> {
 
     private String string;
 
@@ -20,14 +20,10 @@ public class StringParser implements Parser<Character, String> {
         this.string = string;
     }
 
-    /**
-     * Parses the next match from the input.
-     * @return the next match
-     */
-    public Match<String> parse(InputStreamOf<Character> input) throws ParseException {
+    public Match<String> parse(InputStreamOf<Character> input, int offset) throws ParseException {
         try{
             for(int i = 0; i < string.length(); i++){
-                Character next = input.peek(i);
+                Character next = input.peek(i + offset);
                 if(next == null || next != string.charAt(i)){
                     return new Match<String>(null, 0);
                 }

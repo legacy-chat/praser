@@ -1,6 +1,6 @@
 package ca.awoo.praser;
 
-public interface Parser<TToken, TMatch> {
+public abstract class Parser<TToken, TMatch> {
     /**
      * A match result.
      * @param <TMatch> the type of the parsed object
@@ -46,6 +46,7 @@ public interface Parser<TToken, TMatch> {
             return String.format("Match(%s, %d)", value, length);
         }
     }
+
     /**
      * Parses the next object in the stream without consuming any objects from the stream.
      * <p>
@@ -56,5 +57,16 @@ public interface Parser<TToken, TMatch> {
      * @return The match result. If the match was successful, the value should be the parsed object and the length should be the number of objects to be consumed from the stream. If the match was unsuccessful, the value should be null and the length should be 0.
      * @throws ParseException if an exception occurs while parsing the input
      */
-    public Match<TMatch> parse(InputStreamOf<TToken> input) throws ParseException;
+    public Match<TMatch> parse(InputStreamOf<TToken> input) throws ParseException{
+        return parse(input, 0);
+    }
+
+    /**
+     * Parses the next object in the stream at the specified offset without consuming any objects from the stream.
+     * @param input the stream to parse from
+     * @param offset the offset from the current position
+     * @return The match result. If the match was successful, the value should be the parsed object and the length should be the number of objects to be consumed from the stream. If the match was unsuccessful, the value should be null and the length should be 0.
+     * @throws ParseException if an exception occurs while parsing the input
+     */
+    public abstract Match<TMatch> parse(InputStreamOf<TToken> input, int offset) throws ParseException;
 }

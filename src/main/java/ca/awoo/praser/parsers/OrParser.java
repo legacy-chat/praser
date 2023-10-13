@@ -9,7 +9,7 @@ import ca.awoo.praser.Parser;
  * @param <TToken> the type of token to parse
  * @param <TMatch> the parsed type
  */
-public class OrParser<TToken, TMatch> implements Parser<TToken, TMatch> {
+public class OrParser<TToken, TMatch> extends Parser<TToken, TMatch> {
 
     private Parser<TToken, TMatch>[] parsers;
 
@@ -28,9 +28,9 @@ public class OrParser<TToken, TMatch> implements Parser<TToken, TMatch> {
      * @return the next parsed object
      * @throws ParseException if an exception occurs while parsing the input
      */
-    public Match<TMatch> parse(InputStreamOf<TToken> input) throws ParseException {
+    public Match<TMatch> parse(InputStreamOf<TToken> input, int offset) throws ParseException {
         for (Parser<TToken, TMatch> parser : parsers) {
-            Match<TMatch> match = parser.parse(input);
+            Match<TMatch> match = parser.parse(input, offset);
             if (match.isMatch()) {
                 return match;
             }
