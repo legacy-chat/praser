@@ -1,6 +1,6 @@
 package ca.awoo.praser.character;
 
-import ca.awoo.praser.InputStreamOf;
+import ca.awoo.praser.ParseContext;
 import ca.awoo.praser.ParseException;
 import ca.awoo.praser.Parser;
 import ca.awoo.praser.StreamException;
@@ -8,7 +8,7 @@ import ca.awoo.praser.StreamException;
 /**
  * A {@link Parser} that matches an exact string.
  */
-public class StringParser extends Parser<Character, String> {
+public class StringParser implements Parser<Character, String> {
 
     private String string;
 
@@ -20,15 +20,17 @@ public class StringParser extends Parser<Character, String> {
         this.string = string;
     }
 
-    public Match<String> parse(InputStreamOf<Character> input, int offset) throws ParseException {
+    public String parse(ParseContext<Character> context) throws ParseException {
         try{
+            StringBuilder builder = new StringBuilder();
             for(int i = 0; i < string.length(); i++){
-                Character next = input.peek(i + offset);
+                Character next = context.read();
                 if(next == null || next != string.charAt(i)){
-                    return new Match<String>(null, 0);
+                    throw new ParseException("Expected '" + string + "' but got '" + builder.toString() + "'");
                 }
+                builder.append(next);
             }
-            return new Match<String>(string, string.length());
+            return builder.toString();
         }catch(StreamException e){
             throw new ParseException("An exception occured while reading the stream", e);
         }

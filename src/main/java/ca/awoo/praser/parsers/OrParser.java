@@ -1,17 +1,19 @@
 package ca.awoo.praser.parsers;
 
-import ca.awoo.praser.InputStreamOf;
+import ca.awoo.praser.ParseContext;
 import ca.awoo.praser.ParseException;
 import ca.awoo.praser.Parser;
+import ca.awoo.praser.StreamException;
 
 /**
  * A parser that tries to parse its input using a list of parsers, in order.
  * @param <TToken> the type of token to parse
  * @param <TMatch> the parsed type
  */
-public class OrParser<TToken, TMatch> extends Parser<TToken, TMatch> {
+public class OrParser<TToken, TMatch> implements Parser<TToken, TMatch> {
 
     private Parser<TToken, TMatch>[] parsers;
+    private String exceptionMessage = "No parser matched";
 
     /**
      * Creates a new {@link OrParser}.
@@ -22,20 +24,31 @@ public class OrParser<TToken, TMatch> extends Parser<TToken, TMatch> {
     }
 
     /**
-     * Parses the next object in the stream.
-     * Uses each parser in order until one succeeds.
-     * If none succeed, returns a failed match.
-     * @return the next parsed object
-     * @throws ParseException if an exception occurs while parsing the input
+     * Creates a new {@link OrParser}.
+     * @param exceptionMessage the message to use in the exception thrown if no parser matches
+     * @param parsers the parsers to try, in order
      */
-    public Match<TMatch> parse(InputStreamOf<TToken> input, int offset) throws ParseException {
-        for (Parser<TToken, TMatch> parser : parsers) {
-            Match<TMatch> match = parser.parse(input, offset);
-            if (match.isMatch()) {
-                return match;
+    public OrParser(String exceptionMessage, Parser<TToken, TMatch> ...parsers) {
+        this.parsers = parsers;
+        this.exceptionMessage = exceptionMessage;
+    }
+
+    public TMatch parse(ParseContext<TToken> context) throws ParseException {
+        try{
+            for (Parser<TToken, TMatch> parser : parsers) {
+                context.push();
+                try{
+                    TMatch match = parser.parse(context);
+                    context.merge();
+                    return match;
+                }catch (ParseException e){
+                    context.pop();
+                }
             }
+            throw new ParseException(exceptionMessage);
+        }catch(StreamException e){
+            throw new ParseException("An exception occured while parsing", e);
         }
-        return new Match<TMatch>(null, 0);
     }
     
 }

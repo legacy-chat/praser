@@ -20,7 +20,7 @@ public class CharacterStreamTest {
     @Test
     public void testCharStream() throws Exception {
         String s = "Hello World!";
-        InputStreamOf<Character> input = new CharacterStream(new ByteArrayInputStream(s.getBytes()));
+        InputStreamOf<Character> input = new CharacterStream(new ByteArrayInputStream(s.getBytes("UTF-8")), "UTF-8");
         for(char c : s.toCharArray()){
             assertEquals("input.read() == c", c, (char)input.read());
         }
@@ -36,7 +36,7 @@ public class CharacterStreamTest {
     @Test
     public void testPeek() throws Exception {
         String s = "Hello World!";
-        InputStreamOf<Character> input = new CharacterStream(new ByteArrayInputStream(s.getBytes()));
+        InputStreamOf<Character> input = new CharacterStream(new ByteArrayInputStream(s.getBytes("UTF-8")), "UTF-8");
         for(char c : s.toCharArray()){
             assertEquals("input.peek() == c", c, (char)input.peek());
             assertEquals("input.read() == c", c, (char)input.read());

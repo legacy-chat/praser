@@ -2,7 +2,7 @@ package ca.awoo.praser.character;
 
 import java.util.Collection;
 
-import ca.awoo.praser.InputStreamOf;
+import ca.awoo.praser.ParseContext;
 import ca.awoo.praser.ParseException;
 import ca.awoo.praser.Parser;
 import ca.awoo.praser.parsers.OrParser;
@@ -19,7 +19,7 @@ import ca.awoo.praser.parsers.ZeroOrMoreParser;
  * <li>carriage return</li>
  * </ul>
  */
-public class WhitespaceParser extends Parser<Character, String> {
+public class WhitespaceParser implements Parser<Character, String> {
 
     private final Parser<Character, Collection<Character>> parser;
 
@@ -35,17 +35,13 @@ public class WhitespaceParser extends Parser<Character, String> {
         parser = new ZeroOrMoreParser<Character, Character>(singleParser);
     }
 
-    @Override
-    public Match<String> parse(InputStreamOf<Character> input, int offset) throws ParseException {
-        Match<Collection<Character>> match = parser.parse(input, offset);
-        if(match.isMatch()){
-            StringBuilder builder = new StringBuilder();
-            for(Character character : match.value){
-                builder.append(character);
-            }
-            return new Match<String>(builder.toString(), match.length);
+    public String parse(ParseContext<Character> context) throws ParseException {
+        Collection<Character> chars =  parser.parse(context);
+        StringBuilder builder = new StringBuilder();
+        for(Character character : chars){
+            builder.append(character);
         }
-        return new Match<String>(null, 0);
+        return builder.toString();
     }
     
 }

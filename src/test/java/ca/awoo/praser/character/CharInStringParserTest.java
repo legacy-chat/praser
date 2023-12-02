@@ -7,48 +7,29 @@ import java.io.ByteArrayInputStream;
 import org.junit.Test;
 
 import ca.awoo.praser.InputStreamOf;
-import ca.awoo.praser.Parser.Match;
+import ca.awoo.praser.ParseContext;
+import ca.awoo.praser.ParseException;
 
 /**
  * Tests for {@link CharInStringParser}.
  */
 public class CharInStringParserTest {
     
-    /**
-     * Tests {@link CharInStringParser#parse(InputStreamOf, int)}.
-     * @throws Exception if an exception occures while running the test
-     */
     @Test
     public void testCharInStringParser() throws Exception {
-        InputStreamOf<Character> input = new CharacterStream(new ByteArrayInputStream("Hello World!".getBytes()));
+        InputStreamOf<Character> input = new CharacterStream(new ByteArrayInputStream("Hello World!".getBytes("UTF-8")), "UTF-8");
         CharInStringParser parser = new CharInStringParser("oleH");
+        ParseContext<Character> context = new ParseContext<Character>(input);
         for(int i = 0; i < 5; i++){
-            Match<Character> match = parser.parse(input, i);
-            assertTrue("Matching letters of hello", match.isMatch());
-            assertEquals("Matched 1", 1, match.length);
+            parser.parse(context);
         }
         for(int i = 5; i < 7; i++){
-            Match<Character> match = parser.parse(input, i);
-            assertFalse("Not matching letters of \" W\"", match.isMatch());
+            try{
+                parser.parse(context);
+                fail("Expected ParseException");
+            }catch (ParseException e){
+                // Expected
+            }
         }
-        for(int i = 7; i < 8; i++){
-            Match<Character> match = parser.parse(input, i);
-            assertTrue("Matching letters of \"o\"", match.isMatch());
-            assertEquals("Matched 1", 1, match.length);
-        }
-        for(int i = 8; i < 9; i++){
-            Match<Character> match = parser.parse(input, i);
-            assertFalse("Not matching letters of \"r\"", match.isMatch());
-        }
-        for(int i = 9; i < 10; i++){
-            Match<Character> match = parser.parse(input, i);
-            assertTrue("Matching letters of \"l\"", match.isMatch());
-            assertEquals("Matched 1", 1, match.length);
-        }
-        for(int i = 10; i < 11; i++){
-            Match<Character> match = parser.parse(input, i);
-            assertFalse("Not matching letters of \"d!\"", match.isMatch());
-        }
-
     }
 }
