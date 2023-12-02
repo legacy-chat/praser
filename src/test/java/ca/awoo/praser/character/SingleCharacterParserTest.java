@@ -7,27 +7,28 @@ import java.io.ByteArrayInputStream;
 import org.junit.Test;
 
 import ca.awoo.praser.InputStreamOf;
-import ca.awoo.praser.Parser.Match;
+import ca.awoo.praser.ParseContext;
+import ca.awoo.praser.ParseException;
 
 /**
  * Tests for {@link SingleCharacterParser}.
  */
 public class SingleCharacterParserTest {
-    /**
-     * Tests {@link SingleCharacterParser#parse(InputStreamOf)}.
-     * @throws Exception if an exception occures while running the test
-     */
     @Test
     public void testParse() throws Exception {
-        InputStreamOf<Character> input1 = new CharacterStream(new ByteArrayInputStream("Hello World!".getBytes()));
-        InputStreamOf<Character> input2 = new CharacterStream(new ByteArrayInputStream("Goodbye World!".getBytes()));
+        InputStreamOf<Character> input1 = new CharacterStream(new ByteArrayInputStream("Hello World!".getBytes("UTF-8")), "UTF-8");
+        InputStreamOf<Character> input2 = new CharacterStream(new ByteArrayInputStream("Goodbye World!".getBytes("UTF-8")), "UTF-8");
         SingleCharacterParser parser = new SingleCharacterParser('H');
-        Match<Character> match = parser.parse(input1);
-        assertTrue("Match on \"Hello World!\"", match.isMatch());
-        assertEquals("Matched 'H'", 'H', (char)match.value);
-        assertEquals("Matched 1 character", 1, match.length);
-        match = parser.parse(input2);
-        assertFalse("No match on \"Goodbye World!\"", match.isMatch());
-        assertEquals("Matched 0 characters", 0, match.length);
+        ParseContext<Character> context1 = new ParseContext<Character>(input1);
+        ParseContext<Character> context2 = new ParseContext<Character>(input2);
+
+        Character match = parser.parse(context1);
+        assertEquals("Matched 'H'", 'H', (char)match);
+        try{
+            parser.parse(context2);
+            fail("Expected ParseException");
+        }catch (ParseException e){
+            // Expected
+        }
     }
 }

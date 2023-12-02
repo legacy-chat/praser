@@ -60,6 +60,23 @@ public abstract class InputStreamOf<T> {
     }
 
     /**
+     * Consumes a number of objects from the stream without returning them.
+     * @param count the number of objects to consume
+     * @throws StreamException
+     */
+    public void consume(int count) throws StreamException {
+        if(buffer == null){
+            buffer = new ArrayList<T>();
+        }
+        while(buffer.size() < count){
+            buffer.add(readStream());
+        }
+        for(int i = 0; i < count; i++){
+            buffer.remove(0);
+        }
+    }
+
+    /**
      * Stream implementation. Used by the rest of the class to read new objects from the stream into the buffer.
      * Seperating this from {@link #read()} allows buffer management to be handled by the rest of the class without the implementer having to worry about it.
      * @return the next object in the stream

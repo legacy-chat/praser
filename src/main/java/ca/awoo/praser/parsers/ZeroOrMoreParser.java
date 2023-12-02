@@ -3,14 +3,15 @@ package ca.awoo.praser.parsers;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import ca.awoo.praser.InputStreamOf;
+import ca.awoo.praser.ParseContext;
 import ca.awoo.praser.ParseException;
 import ca.awoo.praser.Parser;
+import ca.awoo.praser.StreamException;
 
 /**
  * A parser that matches zero or more instances of another parser.
  */
-public class ZeroOrMoreParser<TToken, TMatch> extends Parser<TToken, Collection<TMatch>> {
+public class ZeroOrMoreParser<TToken, TMatch> implements Parser<TToken, Collection<TMatch>> {
 
     private final Parser<TToken, TMatch> parser;
 
@@ -22,30 +23,23 @@ public class ZeroOrMoreParser<TToken, TMatch> extends Parser<TToken, Collection<
         this.parser = parser;
     }
 
-    /**
-     * Parses zero or more instances of the parser.
-     * <p>
-     * This parser will continue to parse until the parser fails to match.
-     * Keep in mind that this parser matches zero instances of the parser,
-     * meaning it can have a successful match consuming zero tokens.
-     * </p>
-     * @param input the input to parse
-     * @param offset the offset to start parsing at
-     * @return the next parsed collection of objects
-     */
-    public Match<Collection<TMatch>> parse(InputStreamOf<TToken> input, int offset) throws ParseException {
-        ArrayList<TMatch> matches = new ArrayList<TMatch>();
-        int totalLength = 0;
-        while(true){
-            Match<TMatch> match = parser.parse(input, offset + totalLength);
-            if(match.isMatch()){
-                matches.add(match.value);
-                totalLength += match.length;
-            }else{
-                break;
+    public Collection<TMatch> parse(ParseContext<TToken> context) throws ParseException {
+        try{
+            ArrayList<TMatch> matches = new ArrayList<TMatch>();
+            while(true){
+                context.push();
+                try{
+                    TMatch match = parser.parse(context);
+                    matches.add(match);
+                    context.merge();
+                }catch(ParseException e){
+                    context.pop();
+                    break;
+                }
             }
+            return matches;
+        }catch(StreamException e){
+            throw new ParseException("An exception occured while parsing", e);
         }
-        return new Match<Collection<TMatch>>(matches, totalLength);
     }
-    
 }

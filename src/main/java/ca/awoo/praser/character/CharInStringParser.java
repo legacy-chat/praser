@@ -1,6 +1,6 @@
 package ca.awoo.praser.character;
 
-import ca.awoo.praser.InputStreamOf;
+import ca.awoo.praser.ParseContext;
 import ca.awoo.praser.ParseException;
 import ca.awoo.praser.Parser;
 import ca.awoo.praser.parsers.OrParser;
@@ -8,7 +8,7 @@ import ca.awoo.praser.parsers.OrParser;
 /**
  * A {@link Parser} that matches any character in a string.
  */
-public class CharInStringParser extends Parser<Character, Character> {
+public class CharInStringParser implements Parser<Character, Character> {
 
     private Parser<Character, Character> parser;
 
@@ -28,9 +28,8 @@ public class CharInStringParser extends Parser<Character, Character> {
         );
     }
 
-    @Override
-    public Match<Character> parse(InputStreamOf<Character> input, int offset) throws ParseException {
-        return parser.parse(input, offset);
+    public Character parse(ParseContext<Character> context) throws ParseException {
+        return parser.parse(context);
     }
     
 }

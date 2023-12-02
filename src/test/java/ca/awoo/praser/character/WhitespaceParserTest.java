@@ -7,22 +7,19 @@ import java.io.ByteArrayInputStream;
 import org.junit.Test;
 
 import ca.awoo.praser.InputStreamOf;
-import ca.awoo.praser.Parser.Match;
+import ca.awoo.praser.ParseContext;
 
 /**
  * Tests for {@link WhitespaceParser}.
  */
 public class WhitespaceParserTest {
-    /**
-     * Tests {@link WhitespaceParser#parse(InputStreamOf)}.
-     * @throws Exception if an exception occures while running the test
-     */
+
     @Test
     public void testParse() throws Exception {
-        InputStreamOf<Character> input = new CharacterStream(new ByteArrayInputStream(" \t\n\r\f".getBytes()));
+        InputStreamOf<Character> input = new CharacterStream(new ByteArrayInputStream(" \t\n\r\f".getBytes("UTF-8")), "UTF-8");
         WhitespaceParser parser = new WhitespaceParser();
-        Match<String> match = parser.parse(input);
-        assertTrue("Matched", match.isMatch());
-        assertEquals("Matched 5 characters", 5, match.length);
+        ParseContext<Character> context = new ParseContext<Character>(input);
+        String match = parser.parse(context);
+        assertEquals("Matched 5 characters", 5, match.length());
     }
 }

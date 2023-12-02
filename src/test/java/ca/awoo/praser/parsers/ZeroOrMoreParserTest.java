@@ -1,16 +1,14 @@
 package ca.awoo.praser.parsers;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
 
 import org.junit.Test;
 
 import ca.awoo.praser.InputStreamOf;
+import ca.awoo.praser.ParseContext;
 import ca.awoo.praser.Parser;
-import ca.awoo.praser.Parser.Match;
 import ca.awoo.praser.character.*;
 
 /**
@@ -24,12 +22,11 @@ public class ZeroOrMoreParserTest {
      */
     @Test
     public void testMore() throws Exception {
-        InputStreamOf<Character> input = new CharacterStream(new ByteArrayInputStream("aaaaa".getBytes()));
+        InputStreamOf<Character> input = new CharacterStream(new ByteArrayInputStream("aaaaa".getBytes("UTF-8")), "UTF-8");
         Parser<Character, Collection<Character>> parser = new ZeroOrMoreParser<Character, Character>(new SingleCharacterParser('a'));
-        Match<Collection<Character>> match = parser.parse(input);
-        assertTrue("Did match", match.isMatch());
-        assertEquals("Matched 5 characters", 5, match.length);
-        assertEquals("Got 5 matches", 5, match.value.size());
+        ParseContext<Character> context = new ParseContext<Character>(input);
+        Collection<Character> match = parser.parse(context);
+        assertEquals("Got 5 matches", 5, match.size());
     }
 
     /**
@@ -38,12 +35,11 @@ public class ZeroOrMoreParserTest {
      */
     @Test
     public void testNone() throws Exception {
-        InputStreamOf<Character> input = new CharacterStream(new ByteArrayInputStream("bbbbb".getBytes()));
+        InputStreamOf<Character> input = new CharacterStream(new ByteArrayInputStream("bbbbb".getBytes("UTF-8")), "UTF-8");
         Parser<Character, Collection<Character>> parser = new ZeroOrMoreParser<Character, Character>(new SingleCharacterParser('a'));
-        Match<Collection<Character>> match = parser.parse(input);
-        assertTrue("Did match", match.isMatch());
-        assertEquals("Matched 0 characters", 0, match.length);
-        assertEquals("Got 0 matches", 0, match.value.size());
+        ParseContext<Character> context = new ParseContext<Character>(input);
+        Collection<Character> match = parser.parse(context);
+        assertEquals("Got 0 matches", 0, match.size());
     }
 
     /**
@@ -52,12 +48,11 @@ public class ZeroOrMoreParserTest {
      */
     @Test
     public void moreTokensThanMatchesTest() throws Exception {
-        InputStreamOf<Character> input = new CharacterStream(new ByteArrayInputStream("ababab".getBytes()));
+        InputStreamOf<Character> input = new CharacterStream(new ByteArrayInputStream("ababab".getBytes("UTF-8")), "UTF-8");
         Parser<Character, Collection<String>> parser = new ZeroOrMoreParser<Character, String>(new StringParser("ab"));
-        Match<Collection<String>> match = parser.parse(input);
-        assertTrue("Did match", match.isMatch());
-        assertEquals("Matched 6 characters", 6, match.length);
-        assertEquals("Got 3 matches", 3, match.value.size());
+        ParseContext<Character> context = new ParseContext<Character>(input);
+        Collection<String> match = parser.parse(context);
+        assertEquals("Got 3 matches", 3, match.size());
     }
     
 }

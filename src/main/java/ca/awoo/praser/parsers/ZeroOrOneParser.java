@@ -1,14 +1,14 @@
 package ca.awoo.praser.parsers;
 
 import ca.awoo.fwoabl.Optional;
-import ca.awoo.praser.InputStreamOf;
+import ca.awoo.praser.ParseContext;
 import ca.awoo.praser.ParseException;
 import ca.awoo.praser.Parser;
 
 /**
  * A {@link Parser} that matches zero or one of a {@link Parser}.
  */
-public class ZeroOrOneParser<TToken, TMatch> extends Parser<TToken, Optional<TMatch>>{
+public class ZeroOrOneParser<TToken, TMatch> implements Parser<TToken, Optional<TMatch>>{
 
     private Parser<TToken, TMatch> parser;
 
@@ -20,17 +20,20 @@ public class ZeroOrOneParser<TToken, TMatch> extends Parser<TToken, Optional<TMa
         this.parser = parser;
     }
 
-    /**
-     * Parses zero or one instances of the parser. If the parser does not match, returns a match with {@link Optional#none(Class)}.
-     */
     @SuppressWarnings("unchecked")
-    @Override
-    public Match<Optional<TMatch>> parse(InputStreamOf<TToken> input, int offset) throws ParseException {
-        Match<TMatch> match = parser.parse(input, offset);
-        if(match.isMatch()){
-            return new Match<Optional<TMatch>>(Optional.some(match.value), match.length);
-        }else{
-            return new Match<Optional<TMatch>>((Optional<TMatch>) Optional.none(Object.class), 0);
+    public Optional<TMatch> parse(ParseContext<TToken> context) throws ParseException {
+        try{
+            context.push();
+            try{
+                TMatch match = parser.parse(context);
+                context.merge();
+                return Optional.some(match);
+            }catch(ParseException e){
+                context.pop();
+                return (Optional<TMatch>) Optional.none(Object.class);
+            }
+        }catch(Exception e){
+            throw new ParseException("An exception occured while parsing", e);
         }
     }
     

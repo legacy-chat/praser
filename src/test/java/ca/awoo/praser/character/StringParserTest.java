@@ -7,32 +7,21 @@ import java.io.ByteArrayInputStream;
 import org.junit.Test;
 
 import ca.awoo.praser.InputStreamOf;
+import ca.awoo.praser.ParseContext;
 import ca.awoo.praser.Parser;
-import ca.awoo.praser.Parser.Match;
 
 /**
  * Unit tests for {@link StringParser}.
  */
 public class StringParserTest {
 
-    /**
-     * Tests {@link StringParser#parse(InputStreamOf)}.
-     * <p>
-     * Creates a {@link StringParser} with the string "Hello World!".
-     * Creates a {@link CharacterStream} with the string "Hello World!".
-     * Asserts that the {@link StringParser} matches the {@link CharacterStream}.
-     * Asserts that the {@link Match} value is "Hello World!".
-     * Asserts that the {@link Match} length is 12.
-     * </p>
-     * @throws Exception if an exception occures while running the test
-     */
     @Test
     public void testHelloWorld() throws Exception {
-        InputStreamOf<Character> input = new CharacterStream(new ByteArrayInputStream("Hello World!".getBytes()));
+        InputStreamOf<Character> input = new CharacterStream(new ByteArrayInputStream("Hello World!".getBytes("UTF-8")), "UTF-8");
         Parser<Character, String> parser = new StringParser("Hello World!");
-        Match<String> match = parser.parse(input);
-        assertEquals("Matched \"Hello World!\"", "Hello World!", match.value);
-        assertEquals("Matched 12 characters", 12, match.length);
+        ParseContext<Character> context = new ParseContext<Character>(input);
+        String match = parser.parse(context);
+        assertEquals("Matched \"Hello World!\"", "Hello World!", match);
     }
     
 }

@@ -7,7 +7,7 @@ package ca.awoo.praser;
  */
 public class ParsedStream<TToken, TMatch> extends InputStreamOf<TMatch> {
     private Parser<TToken, TMatch> parser;
-    private InputStreamOf<TToken> input;
+    private ParseContext<TToken> context;
 
     /**
      * Creates a new {@link ParsedStream}.
@@ -16,7 +16,7 @@ public class ParsedStream<TToken, TMatch> extends InputStreamOf<TMatch> {
      */
     public ParsedStream(Parser<TToken, TMatch> parser, InputStreamOf<TToken> input) {
         this.parser = parser;
-        this.input = input;
+        this.context = new ParseContext<TToken>(input);
     }
 
     /**
@@ -27,12 +27,7 @@ public class ParsedStream<TToken, TMatch> extends InputStreamOf<TMatch> {
     @Override
     protected TMatch readStream() throws StreamException {
         try{
-            Parser.Match<TMatch> match = parser.parse(input);
-            if (match.isMatch()) {
-                return match.value;
-            } else {
-                return null;
-            }
+            return parser.parse(context);
         }catch(ParseException e){
             throw new StreamException("An exception occured while parsing", e);
         }

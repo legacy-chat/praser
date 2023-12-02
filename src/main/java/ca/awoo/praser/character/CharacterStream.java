@@ -1,7 +1,9 @@
 package ca.awoo.praser.character;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import ca.awoo.praser.InputStreamOf;
 import ca.awoo.praser.StreamException;
@@ -11,14 +13,15 @@ import ca.awoo.praser.StreamException;
  */
 public class CharacterStream extends InputStreamOf<Character>{
 
-    private InputStream input;
+    private BufferedReader input;
+    
 
     /**
      * Creates a new {@link CharacterStream}.
      * @param input the underlying stream to read from
      */
-    public CharacterStream(InputStream input){
-        this.input = input;
+    public CharacterStream(InputStream input, String charset) throws IOException{
+        this.input = new BufferedReader(new InputStreamReader(input, charset));
     }
 
     /**
