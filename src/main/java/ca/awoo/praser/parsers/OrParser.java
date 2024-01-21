@@ -1,5 +1,9 @@
 package ca.awoo.praser.parsers;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import ca.awoo.praser.MultiParseException;
 import ca.awoo.praser.ParseContext;
 import ca.awoo.praser.ParseException;
 import ca.awoo.praser.Parser;
@@ -34,6 +38,7 @@ public class OrParser<TToken, TMatch> implements Parser<TToken, TMatch> {
     }
 
     public TMatch parse(ParseContext<TToken> context) throws ParseException {
+        List<ParseException> exceptions = new ArrayList<ParseException>();
         try{
             for (Parser<TToken, TMatch> parser : parsers) {
                 context.push();
@@ -43,9 +48,10 @@ public class OrParser<TToken, TMatch> implements Parser<TToken, TMatch> {
                     return match;
                 }catch (ParseException e){
                     context.pop();
+                    exceptions.add(e);
                 }
             }
-            throw new ParseException(exceptionMessage);
+            throw new MultiParseException(exceptionMessage, exceptions.toArray(new ParseException[exceptions.size()]));
         }catch(StreamException e){
             throw new ParseException("An exception occured while parsing", e);
         }
