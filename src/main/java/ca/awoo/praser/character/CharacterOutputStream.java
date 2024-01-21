@@ -7,6 +7,9 @@ import java.nio.charset.Charset;
 import ca.awoo.praser.OutputStreamOf;
 import ca.awoo.praser.StreamException;
 
+/**
+ * An {@link OutputStreamOf} that writes characters to an {@link OutputStream}.
+ */
 public class CharacterOutputStream extends OutputStreamOf<Character> {
 
     private final OutputStream output;
