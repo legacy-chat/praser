@@ -14,7 +14,7 @@ public class MultiParseExceptionTest {
      * @throws Exception if an exception occurs while running the test
      */
     @Test
-    public void testConstructor() {
+    public void testConstructor() throws Exception {
         Exception shallow = new Exception();
         Exception deep = new Exception(shallow);
         MultiParseException exception = new MultiParseException("message", shallow, deep);
