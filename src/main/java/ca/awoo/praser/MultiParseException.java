@@ -1,5 +1,7 @@
 package ca.awoo.praser;
 
+import ca.awoo.praser.parsers.OrParser;
+
 /**
  * An exception that is thrown when multiple parsers fail to parse the same input.
  * @see ParseException
