@@ -6,7 +6,7 @@ import java.util.List;
 import ca.awoo.fwoabl.Optional;
 import ca.awoo.fwoabl.function.Function;
 
-public class Parsers {
+public class Combinators {
     public static <Token, Match> Parser<Token, Match> or(final Parser<Token, Match>... parsers) {
         return new Parser<Token,Match>() {
             public Match parse(ParseContext<Token> context) throws ParseException {
