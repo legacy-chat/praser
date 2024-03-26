@@ -8,7 +8,6 @@ import java.util.Collection;
 
 import ca.awoo.fwoabl.function.Function;
 
-import static ca.awoo.praser.Combinators.fold;
 import static ca.awoo.praser.Combinators.many;
 import static ca.awoo.praser.Combinators.map;
 
@@ -41,7 +40,7 @@ public final class Text {
     }
 
     public static <Token> Parser<Token, String> stringFold(final Parser<Token, ? extends Collection<Character>> parser){
-        return fold(parser, new Function<Collection<Character>, String>(){
+        return map(parser, new Function<Collection<Character>, String>(){
             public String invoke(Collection<Character> chars){
                 StringBuilder sb = new StringBuilder();
                 for(Character c : chars){

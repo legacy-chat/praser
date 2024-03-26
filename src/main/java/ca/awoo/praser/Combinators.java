@@ -5,10 +5,39 @@ import java.util.Collection;
 import java.util.List;
 
 import ca.awoo.fwoabl.Optional;
+import ca.awoo.fwoabl.function.BiFunction;
 import ca.awoo.fwoabl.function.Function;
 
 public final class Combinators {
     private Combinators() {}
+
+    /**
+     * Match a single token
+     * @param <Token> the type of tokens
+     * @param token the token to match
+     * @return a parser that matches a single token
+     */
+    public static <Token> Parser<Token, Token> one(final Token token){
+        return new Parser<Token, Token>() {
+            public Token parse(Context<Token> context) throws ParseException {
+                Token next;
+                try {
+                    next = context.next();
+                    if(next == null){
+                        throw new ParseException(context, "Unexpected end of stream");
+                    }
+                    if(next.equals(token)){
+                        return next;
+                    }else{
+                        throw new ParseException(context, "Expected " + token + " but got " + next);
+                    }
+                } catch (StreamException e) {
+                    throw new ParseException(context, "Exception while reading one", e);
+                }
+                
+            }
+        };
+    }
 
     /**
      * Matches any of the given parsers.
@@ -23,9 +52,14 @@ public final class Combinators {
                 List<ParseException> exceptions = new ArrayList<ParseException>();
                 for (Parser<Token, Match> parser : parsers) {
                     try {
-                        return parser.parse(context.clone());
+                        Context<Token> clone = context.clone();
+                        Match match = parser.parse(clone);
+                        context.skip(clone.getOffset() - context.getOffset());
+                        return match;
                     } catch (ParseException e) {
                         exceptions.add(e);
+                    } catch(StreamException e) {
+                        throw new ParseException(context, "Exception while reading or", e);
                     }
                 }
                 throw new MultiParseException(context, exceptions);
@@ -45,9 +79,14 @@ public final class Combinators {
             @SuppressWarnings("unchecked")
             public Optional<Match> parse(Context<Token> context) throws ParseException {
                 try{
-                    return Optional.some(parser.parse(context.clone()));
+                    Context<Token> clone = context.clone();
+                    Match match = parser.parse(clone);
+                    context.skip(clone.getOffset() - context.getOffset());
+                    return (Optional<Match>) Optional.some(match);
                 } catch (ParseException e) {
                     return (Optional<Match>) Optional.none(Object.class);
+                } catch(StreamException e) {
+                    throw new ParseException(context, "Exception while reading optional", e);
                 }
             }
         };
@@ -120,10 +159,23 @@ public final class Combinators {
         };
     }
 
-    public static <Token, Matches, Match> Parser<Token, Match> fold(final Parser<Token, ? extends Collection<Matches>> parser, final Function<Collection<Matches>, Match> function) {
+    /**
+     * Fold the output of a parser into a single value
+     * @param <Token> the type of tokens
+     * @param <Match> the type of matches
+     * @param parser the parser to fold
+     * @param init the initial value
+     * @param function the function to fold with
+     * @return a parser that folds the output of a parser into a single value
+     */
+    public static <Token, Match> Parser<Token, Match> fold(final Parser<Token, ? extends Collection<Match>> parser, final Match init, final BiFunction<Match, Match, Match> function) {
         return new Parser<Token, Match>() {
             public Match parse(Context<Token> context) throws ParseException {
-                return function.invoke(parser.parse(context));
+                Match result = init;
+                for(Match match : parser.parse(context)){
+                    result = function.invoke(result, match);
+                }
+                return result;
             }
         };
     }
