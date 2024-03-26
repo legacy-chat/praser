@@ -1,5 +1,6 @@
 package ca.awoo.praser;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 /**
@@ -29,6 +30,9 @@ public class IteratorStream<T> extends InputStreamOf<T> {
         } else {
             return null;
         }
+    }
+
+    public void close() throws IOException {
     }
     
 }

@@ -6,13 +6,13 @@ package ca.awoo.praser;
  */
 public class ParseException extends Exception {
 
-    private final ParseContext<?> context;
+    private final Context<?> context;
 
     /**
      * Creates a new {@link ParseException}.
      * @param message the message
      */
-    public ParseException(ParseContext<?> context, String message) {
+    public ParseException(Context<?> context, String message) {
         super(message + " at " + context.toString());
         this.context = context;
     }
@@ -22,7 +22,7 @@ public class ParseException extends Exception {
      * @param message the message
      * @param cause the cause
      */
-    public ParseException(ParseContext<?> context, String message, Throwable cause) {
+    public ParseException(Context<?> context, String message, Throwable cause) {
         super(message + " at " + context.toString(), cause);
         this.context = context;
     }
@@ -31,7 +31,7 @@ public class ParseException extends Exception {
      * Creates a new {@link ParseException}.
      * @param cause the cause
      */
-    public ParseException(ParseContext<?> context, Throwable cause){
+    public ParseException(Context<?> context, Throwable cause){
         super("at " + context.toString(), cause);
         this.context = context;
     }
@@ -39,7 +39,7 @@ public class ParseException extends Exception {
     /**
      * Creates a new {@link ParseException}.
      */
-    public ParseException(ParseContext<?> context) {
+    public ParseException(Context<?> context) {
         super("at " + context.toString());
         this.context = context;
     }
@@ -48,7 +48,7 @@ public class ParseException extends Exception {
      * Gets the context.
      * @return the context
      */
-    public ParseContext<?> getContext() {
+    public Context<?> getContext() {
         return context;
     }
 }

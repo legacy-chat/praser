@@ -1,11 +1,12 @@
 package ca.awoo.praser;
 
+import java.io.Closeable;
 import java.util.ArrayList;
 
 /**
  * A read-only stream of objects. Supports arbitrary lookahead.
  */
-public abstract class InputStreamOf<T> {
+public abstract class InputStreamOf<T> implements Closeable{
     private ArrayList<T> buffer;
 
     /**

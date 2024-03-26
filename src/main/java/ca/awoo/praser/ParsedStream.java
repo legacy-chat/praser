@@ -1,5 +1,7 @@
 package ca.awoo.praser;
 
+import java.io.IOException;
+
 /**
  * A stream that parses its input using a {@link Parser}.
  * @param <TToken> the type of token to parse
@@ -7,7 +9,8 @@ package ca.awoo.praser;
  */
 public class ParsedStream<TToken, TMatch> extends InputStreamOf<TMatch> {
     private Parser<TToken, TMatch> parser;
-    private ParseContext<TToken> context;
+    private Context<TToken> context;
+    private InputStreamOf<TToken> input;
 
     /**
      * Creates a new {@link ParsedStream}.
@@ -16,7 +19,7 @@ public class ParsedStream<TToken, TMatch> extends InputStreamOf<TMatch> {
      */
     public ParsedStream(Parser<TToken, TMatch> parser, InputStreamOf<TToken> input) {
         this.parser = parser;
-        this.context = new ParseContext<TToken>(input);
+        this.context = new StreamContext<TToken>(input);
     }
 
     /**
@@ -31,5 +34,9 @@ public class ParsedStream<TToken, TMatch> extends InputStreamOf<TMatch> {
         }catch(ParseException e){
             throw new StreamException("An exception occured while parsing", e);
         }
+    }
+
+    public void close() throws IOException {
+        input.close();
     }
 }
