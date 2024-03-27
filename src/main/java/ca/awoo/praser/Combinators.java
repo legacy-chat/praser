@@ -184,4 +184,30 @@ public final class Combinators {
             }
         };
     }
+
+    /**
+     * Match the next token if the given parser does not match
+     * @param <Token> the type of tokens
+     * @param parser the parser to not match
+     * @return a parser that matches the next token if the given parser does not match
+     */
+    public static <Token> Parser<Token, Token> not(final Parser<Token, Token> parser){
+        return new Parser<Token, Token>() {
+            public Token parse(Context<Token> context) throws ParseException {
+                try {
+                    Context<Token> clone = context.clone();
+                    parser.parse(clone);
+                    throw new ParseException(context, "Expected not to match " + parser.parse(context));
+                } catch (ParseException e) {
+                    try{
+                        return context.next().get();
+                    } catch(OptionalNoneException ex){
+                        throw new ParseException(context, "Unexpected end of stream", ex);
+                    } catch(StreamException ex){
+                        throw new ParseException(context, "Exception while reading stream", ex);
+                    }
+                }
+            }
+        };
+    }
 }
