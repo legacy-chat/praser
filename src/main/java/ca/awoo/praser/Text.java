@@ -105,6 +105,10 @@ public final class Text {
         return oneOf("0123456789");
     }
 
+    public static Parser<Character, Character> hexDigit(){
+        return oneOf("0123456789abcdefABCDEF");
+    }
+
     public static Parser<Character, Character> letter(){
         return oneOf("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
     }
