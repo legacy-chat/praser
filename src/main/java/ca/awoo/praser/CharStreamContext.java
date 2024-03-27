@@ -1,5 +1,8 @@
 package ca.awoo.praser;
 
+import ca.awoo.fwoabl.Optional;
+import ca.awoo.fwoabl.function.Consumer;
+
 public class CharStreamContext implements Context<Character> {
 
     private final InputStreamOf<Character> input;
@@ -18,15 +21,19 @@ public class CharStreamContext implements Context<Character> {
         this.column = column;
     }
 
-    public Character next() throws StreamException {
-        Character value = input.peek(offset);
-        if(value == '\n'){
-            line++;
-            column = 1;
-        }else{
-            column++;
-        }
-        offset++;
+    public Optional<Character> next() throws StreamException {
+        Optional<Character> value = input.read();
+        value.consume(new Consumer<Character>() {
+            public void invoke(Character c) {
+                if(c == '\n'){
+                    line++;
+                    column = 1;
+                }else{
+                    column++;
+                }
+                offset++;
+            }
+        });
         return value;
     }
 

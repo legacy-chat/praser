@@ -5,8 +5,11 @@ import java.util.Collection;
 import java.util.List;
 
 import ca.awoo.fwoabl.Optional;
+import ca.awoo.fwoabl.OptionalNoneException;
 import ca.awoo.fwoabl.function.BiFunction;
 import ca.awoo.fwoabl.function.Function;
+
+import static ca.awoo.fwoabl.function.Functions.equal;
 
 public final class Combinators {
     private Combinators() {}
@@ -20,19 +23,20 @@ public final class Combinators {
     public static <Token> Parser<Token, Token> one(final Token token){
         return new Parser<Token, Token>() {
             public Token parse(Context<Token> context) throws ParseException {
-                Token next;
                 try {
-                    next = context.next();
-                    if(next == null){
+                    Optional<Token> next = context.next();
+                    if(next.isNone()){
                         throw new ParseException(context, "Unexpected end of stream");
                     }
-                    if(next.equals(token)){
-                        return next;
+                    if(next.test(equal(token))){
+                        return next.get();
                     }else{
                         throw new ParseException(context, "Expected " + token + " but got " + next);
                     }
                 } catch (StreamException e) {
                     throw new ParseException(context, "Exception while reading one", e);
+                } catch(OptionalNoneException e){
+                    throw new ParseException(context, "Unreachable", e);
                 }
                 
             }
@@ -76,15 +80,14 @@ public final class Combinators {
      */
     public static <Token, Match> Parser<Token, Optional<Match>> optional(final Parser<Token, Match> parser) {
         return new Parser<Token, Optional<Match>>() {
-            @SuppressWarnings("unchecked")
             public Optional<Match> parse(Context<Token> context) throws ParseException {
                 try{
                     Context<Token> clone = context.clone();
                     Match match = parser.parse(clone);
                     context.skip(clone.getOffset() - context.getOffset());
-                    return (Optional<Match>) Optional.some(match);
+                    return (Optional<Match>) new Optional.Some<Match>(match);
                 } catch (ParseException e) {
-                    return (Optional<Match>) Optional.none(Object.class);
+                    return (Optional<Match>) new Optional.None<Match>();
                 } catch(StreamException e) {
                     throw new ParseException(context, "Exception while reading optional", e);
                 }
@@ -147,13 +150,15 @@ public final class Combinators {
         return new Parser<Token, Token>() {
             public Token parse(Context<Token> context) throws ParseException {
                 try {
-                    Token next = context.next();
-                    if(next == null){
+                    Optional<Token> next = context.next();
+                    if(next.isNone()){
                         throw new ParseException(context, "Unexpected end of stream");
                     }
-                    return next;
+                    return next.get();
                 } catch (StreamException e) {
                     throw new ParseException(context, "Exception while reading any", e);
+                } catch(OptionalNoneException e){
+                    throw new ParseException(context, "Unreachable", e);
                 }
             }
         };

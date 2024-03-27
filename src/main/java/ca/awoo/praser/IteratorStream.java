@@ -3,6 +3,8 @@ package ca.awoo.praser;
 import java.io.IOException;
 import java.util.Iterator;
 
+import ca.awoo.fwoabl.Optional;
+
 /**
  * An {@link InputStreamOf} that reads objects from an {@link Iterator}.
  * @param <T> the type of object to read
@@ -24,11 +26,11 @@ public class IteratorStream<T> extends InputStreamOf<T> {
      * @return the next object in the iterator
      */
     @Override
-    protected T readStream() {
+    protected Optional<T> readStream() {
         if (iterator.hasNext()) {
-            return iterator.next();
+            return new Optional.Some<T>(iterator.next());
         } else {
-            return null;
+            return new Optional.None<T>();
         }
     }
 

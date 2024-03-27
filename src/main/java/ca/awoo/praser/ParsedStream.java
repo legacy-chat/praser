@@ -2,6 +2,8 @@ package ca.awoo.praser;
 
 import java.io.IOException;
 
+import ca.awoo.fwoabl.Optional;
+
 /**
  * A stream that parses its input using a {@link Parser}.
  * @param <TToken> the type of token to parse
@@ -28,9 +30,9 @@ public class ParsedStream<TToken, TMatch> extends InputStreamOf<TMatch> {
      * @throws StreamException if an exception occurs while reading the underlying stream
      */
     @Override
-    protected TMatch readStream() throws StreamException {
+    protected Optional<TMatch> readStream() throws StreamException {
         try{
-            return parser.parse(context);
+            return new Optional.Some<TMatch>(parser.parse(context));
         }catch(ParseException e){
             throw new StreamException("An exception occured while parsing", e);
         }

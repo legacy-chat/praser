@@ -11,19 +11,19 @@ public class TextTest {
     @Test
     public void contextFromStreamTest() throws Exception{
         Context<Character> context = Text.contextFromStream(new ByteArrayInputStream("Hello, World!".getBytes("UTF-8")), Charset.forName("UTF-8"));
-        assertEquals('H', (char)context.next());
-        assertEquals('e', (char)context.next());
-        assertEquals('l', (char)context.next());
-        assertEquals('l', (char)context.next());
-        assertEquals('o', (char)context.next());
-        assertEquals(',', (char)context.next());
-        assertEquals(' ', (char)context.next());
-        assertEquals('W', (char)context.next());
-        assertEquals('o', (char)context.next());
-        assertEquals('r', (char)context.next());
-        assertEquals('l', (char)context.next());
-        assertEquals('d', (char)context.next());
-        assertEquals('!', (char)context.next());
+        assertEquals('H', (char)context.next().get());
+        assertEquals('e', (char)context.next().get());
+        assertEquals('l', (char)context.next().get());
+        assertEquals('l', (char)context.next().get());
+        assertEquals('o', (char)context.next().get());
+        assertEquals(',', (char)context.next().get());
+        assertEquals(' ', (char)context.next().get());
+        assertEquals('W', (char)context.next().get());
+        assertEquals('o', (char)context.next().get());
+        assertEquals('r', (char)context.next().get());
+        assertEquals('l', (char)context.next().get());
+        assertEquals('d', (char)context.next().get());
+        assertEquals('!', (char)context.next().get());
     }
 
     @Test

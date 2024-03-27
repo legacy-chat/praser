@@ -1,5 +1,7 @@
 package ca.awoo.praser;
 
+import ca.awoo.fwoabl.Optional;
+
 public class StreamContext<T> implements Context<T> {
     private final InputStreamOf<T> input;
 
@@ -15,7 +17,7 @@ public class StreamContext<T> implements Context<T> {
         this.offset = offset;
     }
 
-    public T next() throws StreamException {
+    public Optional<T> next() throws StreamException {
         offset++;
         return input.read();
     }

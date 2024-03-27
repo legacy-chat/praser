@@ -6,10 +6,13 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.Collection;
 
+import ca.awoo.fwoabl.Optional;
+import ca.awoo.fwoabl.OptionalNoneException;
 import ca.awoo.fwoabl.function.Function;
 
 import static ca.awoo.praser.Combinators.many;
 import static ca.awoo.praser.Combinators.map;
+import static ca.awoo.fwoabl.function.Functions.equal;
 
 public final class Text {
     private Text(){}
@@ -20,13 +23,13 @@ public final class Text {
             private final InputStreamReader reader = new InputStreamReader(is, cs);
 
             @Override
-            protected Character readStream() throws StreamException {
+            protected Optional<Character> readStream() throws StreamException {
                 try{
                     int next = reader.read();
                     if(next == -1){
-                        return null;
+                        return new Optional.None<Character>();
                     }else{
-                        return (char)next;
+                        return new Optional.Some<Character>((char)next);
                     }
                 }catch(Exception e){
                     throw new StreamException("An exception occured while reading the underlying stream", e);
@@ -56,11 +59,11 @@ public final class Text {
             public String parse(Context<Character> context) throws ParseException {
                 for(char c : tag.toCharArray()){
                     try{
-                        Character next = context.next();
-                        if(next == null){
+                        Optional<Character> next = context.next();
+                        if(next.isNone()){
                             throw new ParseException(context, "Unexpected end of stream while reading tag " + tag);
                         }
-                        if(next != c){
+                        if(!next.test(equal(c))){
                             throw new ParseException(context, "Could not read tag " + tag);
                         }
                     } catch(StreamException e){
@@ -75,18 +78,19 @@ public final class Text {
     public static Parser<Character, Character> oneOf(final String string){
         return new Parser<Character, Character>(){
             public Character parse(Context<Character> context) throws ParseException {
-                Character c;
                 try {
-                    c = context.next();
-                    if(c == null){
+                    Optional<Character> c = context.next();
+                    if(c.isNone()){
                         throw new ParseException(context, "Unexpected end of stream while reading one of " + string);
                     }
-                    if(string.indexOf(c) == -1){
+                    if(string.indexOf(c.get()) == -1){
                         throw new ParseException(context, "Expected one of " + string + " but got " + c);
                     }
-                    return c;
+                    return c.get();
                 } catch (StreamException e) {
                     throw new ParseException(context, "Exception while reading one of " + string, e);
+                } catch(OptionalNoneException e){
+                    throw new ParseException(context, "Unreachable", e);
                 }
                 
             }

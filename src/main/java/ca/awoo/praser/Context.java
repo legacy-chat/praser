@@ -1,5 +1,7 @@
 package ca.awoo.praser;
 
+import ca.awoo.fwoabl.Optional;
+
 /**
  * A context for parsing.
  */
@@ -9,7 +11,7 @@ public interface Context<T> {
      * @return the token
      * @throws StreamException if there is an error reading the stream
      */
-    public T next() throws StreamException;
+    public Optional<T> next() throws StreamException;
 
     /**
      * Skip n tokens.

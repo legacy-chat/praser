@@ -24,7 +24,7 @@ public class IteratorStreamTest {
         list.add(3);
         InputStreamOf<Integer> input = new IteratorStream<Integer>(list.iterator());
         for(int i : list){
-            assertEquals("input.read() == i", i, (int)input.read());
+            assertEquals("input.read() == i", i, (int)input.read().get());
         }
     }
 
@@ -43,8 +43,8 @@ public class IteratorStreamTest {
         list.add(3);
         InputStreamOf<Integer> input = new IteratorStream<Integer>(list.iterator());
         for(int i : list){
-            assertEquals("input.peek() == i", i, (int)input.peek());
-            assertEquals("input.read() == i", i, (int)input.read());
+            assertEquals("input.peek() == i", i, (int)input.peek().get());
+            assertEquals("input.read() == i", i, (int)input.read().get());
         }
     }
 }

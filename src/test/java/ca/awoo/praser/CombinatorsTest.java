@@ -46,8 +46,8 @@ public class CombinatorsTest {
     public void optionalTest() throws Exception{
         Context<Integer> context = createContext(1, 2, 3);
         Parser<Integer, Optional<Integer>> parser = Combinators.optional(Combinators.one(1));
-        assertEquals(Optional.some(1), parser.parse(context));
-        assertEquals(Optional.none(Integer.class), parser.parse(context));
+        assertEquals(new Optional.Some<Integer>(1), parser.parse(context));
+        assertEquals(new Optional.None<Integer>(), parser.parse(context));
     }
 
     @Test

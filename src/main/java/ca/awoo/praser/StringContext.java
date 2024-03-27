@@ -1,5 +1,7 @@
 package ca.awoo.praser;
 
+import ca.awoo.fwoabl.Optional;
+
 public class StringContext implements Context<Character>{
     private final String input;
     private int offset = 0;
@@ -17,9 +19,9 @@ public class StringContext implements Context<Character>{
         this.column = column;
     }
 
-    public Character next() throws StreamException {
+    public Optional<Character> next() throws StreamException {
         if(offset >= input.length()){
-            return null;
+            return new Optional.None<Character>();
         }
         Character value = input.charAt(offset);
         if(value == '\n'){
@@ -29,7 +31,7 @@ public class StringContext implements Context<Character>{
             column++;
         }
         offset++;
-        return value;
+        return new Optional.Some<Character>(value);
     }
 
     public StringContext clone() {

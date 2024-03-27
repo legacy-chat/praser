@@ -2,6 +2,8 @@ package ca.awoo.praser;
 
 import java.io.IOException;
 
+import ca.awoo.fwoabl.Optional;
+
 /**
  * An input stream that works by peeking at an underlying stream.
  */
@@ -15,7 +17,7 @@ public class PeekingInputStream<T> extends InputStreamOf<T> {
     }
 
     @Override
-    protected T readStream() throws StreamException {
+    protected Optional<T> readStream() throws StreamException {
         return input.peek(offset++);
     }
 

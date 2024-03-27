@@ -3,30 +3,39 @@ package ca.awoo.praser;
 import java.io.Closeable;
 import java.util.ArrayList;
 
+import ca.awoo.fwoabl.Optional;
+import ca.awoo.fwoabl.function.Consumer;
+
 /**
  * A read-only stream of objects. Supports arbitrary lookahead.
  */
 public abstract class InputStreamOf<T> implements Closeable{
     private ArrayList<T> buffer;
 
+    private final Consumer<T> bufferConsumer = new Consumer<T>() {
+        public void invoke(T value) {
+            buffer.add(value);
+        }
+    };
+
     /**
      * Returns the next object in the stream without consuming it.
      * @return the next object in the stream
      * @throws StreamException if an exception occurs while reading the underlying stream
      */
-    public T peek() throws StreamException {
+    public Optional<T> peek() throws StreamException {
         if (buffer == null) {
             buffer = new ArrayList<T>();
-            if(!buffer.add(readStream())){
-                return null;
-            }
         }
         if(buffer.isEmpty()){
-            if(!buffer.add(readStream())){
-                return null;
+            Optional<T> next = readStream();
+            if(!next.isSome()){
+                return new Optional.None<T>();
             }
+            next.consume(bufferConsumer);
+
         }
-        return buffer.get(0);
+        return new Optional.Some<T>(buffer.get(0));
     }
 
     /**
@@ -35,14 +44,18 @@ public abstract class InputStreamOf<T> implements Closeable{
      * @return the object at the specified offset in the stream
      * @throws StreamException if an exception occurs while reading the underlying stream
      */
-    public T peek(int offset) throws StreamException {
+    public Optional<T> peek(int offset) throws StreamException {
         if (buffer == null) {
             buffer = new ArrayList<T>(offset);
         }
         while(buffer.size() <= offset){
-            buffer.add(readStream());
+            Optional<T> next = readStream();
+            if(!next.isSome()){
+                return new Optional.None<T>();
+            }
+            next.consume(bufferConsumer);
         }
-        return buffer.get(offset);
+        return new Optional.Some<T>(buffer.get(offset));
     }
 
     /**
@@ -50,14 +63,18 @@ public abstract class InputStreamOf<T> implements Closeable{
      * @return the next object in the stream
      * @throws StreamException if an exception occurs while reading the underlying stream
      */
-    public T read() throws StreamException {
+    public Optional<T> read() throws StreamException {
         if(buffer == null){
             buffer = new ArrayList<T>();
         }
         if(buffer.isEmpty()){
-            buffer.add(readStream());
+            Optional<T> next = readStream();
+            if(!next.isSome()){
+                return new Optional.None<T>();
+            }
+            next.consume(bufferConsumer);
         }
-        return buffer.remove(0);
+        return new Optional.Some<T>(buffer.remove(0));
     }
 
     /**
@@ -70,9 +87,11 @@ public abstract class InputStreamOf<T> implements Closeable{
             buffer = new ArrayList<T>();
         }
         while(buffer.size() < count){
-            buffer.add(readStream());
+            readStream().consume(bufferConsumer);
         }
         for(int i = 0; i < count; i++){
+            if(buffer.isEmpty())
+                break;
             buffer.remove(0);
         }
     }
@@ -83,5 +102,5 @@ public abstract class InputStreamOf<T> implements Closeable{
      * @return the next object in the stream
      * @throws StreamException if an exception occurs while reading the underlying stream
      */
-    protected abstract T readStream() throws StreamException;
+    protected abstract Optional<T> readStream() throws StreamException;
 }
