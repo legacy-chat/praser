@@ -54,6 +54,18 @@ public final class Text {
         });
     }
 
+    public static <Token> Parser<Token, String> stringAppend(final Parser<Token, ? extends Collection<String>> parser){
+        return map(parser, new Function<Collection<String>, String>(){
+            public String invoke(Collection<String> strings){
+                StringBuilder sb = new StringBuilder();
+                for(String s : strings){
+                    sb.append(s);
+                }
+                return sb.toString();
+            }
+        });
+    }
+
     public static Parser<Character, String> tag(final String tag){
         return new Parser<Character,String>() {
             public String parse(Context<Character> context) throws ParseException {
