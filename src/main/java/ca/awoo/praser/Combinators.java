@@ -104,7 +104,7 @@ public final class Combinators {
      * @param function the function to apply
      * @return a parser that maps the output of a parser
      */
-    public static <Token, Match1, Match2> Parser<Token, Match2> map(final Parser<Token, Match1> parser, final Function<Match1, Match2> function) {
+    public static <Token, Match1, Match2> Parser<Token, Match2> map(final Parser<Token, Match1> parser, final Function<? super Match1, Match2> function) {
         return new Parser<Token, Match2>() {
             public Match2 parse(Context<Token> context) throws ParseException {
                 return function.invoke(parser.parse(context));
