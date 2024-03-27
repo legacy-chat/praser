@@ -229,4 +229,24 @@ public final class Combinators {
             }
         };
     }
+
+    /**
+     * Match the given parser n times
+     * @param <Token> the type of tokens
+     * @param <Match> the type of matches
+     * @param n the number of times to match
+     * @param parser the parser to match
+     * @return a parser that matches the given parser n times
+     */
+    public static <Token, Match> Parser<Token, List<Match>> repN(final int n, final Parser<Token, Match> parser){
+        return new Parser<Token, List<Match>>() {
+            public List<Match> parse(Context<Token> context) throws ParseException {
+                List<Match> matches = new ArrayList<Match>(n);
+                for(int i = 0; i < n; i++){
+                    matches.add(parser.parse(context));
+                }
+                return matches;
+            }
+        };
+    }
 }
