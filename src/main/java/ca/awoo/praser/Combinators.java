@@ -191,7 +191,7 @@ public final class Combinators {
      * @param parser the parser to not match
      * @return a parser that matches the next token if the given parser does not match
      */
-    public static <Token> Parser<Token, Token> not(final Parser<Token, Token> parser){
+    public static <Token> Parser<Token, Token> not(final Parser<Token, ?> parser){
         return new Parser<Token, Token>() {
             public Token parse(Context<Token> context) throws ParseException {
                 try {
