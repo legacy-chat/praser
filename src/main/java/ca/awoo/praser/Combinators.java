@@ -210,4 +210,23 @@ public final class Combinators {
             }
         };
     }
+
+    /**
+     * Matches a sequence of parsers
+     * @param <Token> the type of tokens
+     * @param <Match> the type of matches
+     * @param parsers the parsers to match
+     * @return a parser that matches a sequence of parsers
+     */
+    public static <Token, Match> Parser<Token, List<Match>> seq(final Parser<Token, Match>... parsers) {
+        return new Parser<Token, List<Match>>() {
+            public List<Match> parse(Context<Token> context) throws ParseException {
+                List<Match> matches = new ArrayList<Match>();
+                for (Parser<Token, Match> parser : parsers) {
+                    matches.add(parser.parse(context));
+                }
+                return matches;
+            }
+        };
+    }
 }
