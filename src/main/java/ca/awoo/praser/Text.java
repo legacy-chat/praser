@@ -115,7 +115,7 @@ public final class Text {
                         throw new ParseException(context, "Unexpected end of stream while reading one of " + string);
                     }
                     if(string.indexOf(c.get()) == -1){
-                        throw new ParseException(context, "Expected one of " + string + " but got " + c);
+                        throw new ParseException(context, "Expected one of " + string + " but got " + c.get());
                     }
                     return c.get();
                 } catch (StreamException e) {
