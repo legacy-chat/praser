@@ -24,6 +24,9 @@ public class ParsedContext<Token, Match> implements Context<Match> {
     }
 
     public Optional<Match> next() throws StreamException {
+        if(parentContext.clone().next().isNone()){
+            return new Optional.None<Match>();
+        }
         offset++;
         try {
             return new Optional.Some<Match>(parser.parse(parentContext));

@@ -175,6 +175,36 @@ public final class Combinators {
             }
         };
     }
+
+    public static <Token, Match> Parser<Token, List<Match>> oneOrMore(final Parser<Token, Match> parser){
+        return new Parser<Token, List<Match>>() {
+            public List<Match> parse(Context<Token> context) throws ParseException {
+                List<Match> matches = new ArrayList<Match>();
+                while(true){
+                    try{
+                        //We have to clone the context so that we can backtrack if the parser fails
+                        Context<Token> clone = context.clone();
+                        matches.add(parser.parse(clone));
+                        //Success, advance the main context
+                        context.skip(clone.getOffset() - context.getOffset());
+                    }catch(ParseException e){
+                        break;
+                    } catch (StreamException e) {
+                        throw new ParseException(context, "Exception while reading many", e);
+                    }
+                }
+                if(matches.isEmpty()){
+                    throw new ParseException(context, "Expected at least one match");
+                }
+                return matches;
+            }
+
+            @Override
+            public String toString() {
+                return "OneOrMore(" + parser + ")";
+            }
+        };
+    }
     
     /**
     * Match any token
