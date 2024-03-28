@@ -55,6 +55,11 @@ public final class Text {
                 }
                 return sb.toString();
             }
+
+            @Override
+            public String toString(){
+                return "StringFold";
+            }
         });
     }
 
@@ -66,6 +71,11 @@ public final class Text {
                     sb.append(s);
                 }
                 return sb.toString();
+            }
+
+            @Override
+            public String toString(){
+                return "StringAppend";
             }
         });
     }
@@ -87,6 +97,11 @@ public final class Text {
                     }
                 }
                 return tag;
+            }
+
+            @Override
+            public String toString(){
+                return "Tag(" + tag + ")";
             }
         };
     }
@@ -110,6 +125,11 @@ public final class Text {
                 }
                 
             }
+
+            @Override
+            public String toString(){
+                return "OneOf(" + string + ")";
+            }
         };
     }
 
@@ -119,10 +139,15 @@ public final class Text {
      * @param parser The parser that returns a character
      * @return A parser that returns a string
      */
-    public static <Token> Parser<Token, String> charToString(Parser<Token, Character> parser){
+    public static <Token> Parser<Token, String> charToString(final Parser<Token, Character> parser){
         return map(parser, new Function<Character, String>(){
             public String invoke(Character c){
                 return c.toString();
+            }
+
+            @Override
+            public String toString(){
+                return "CharToString";
             }
         });
     }
@@ -147,6 +172,11 @@ public final class Text {
         return map(stringFold(many(digit())), new Function<String, Integer>(){
             public Integer invoke(String digits){
                 return Integer.parseInt(digits);
+            }
+
+            @Override
+            public String toString(){
+                return "ToInteger";
             }
         });
     }

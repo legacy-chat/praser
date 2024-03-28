@@ -14,13 +14,13 @@ import static ca.awoo.fwoabl.function.Functions.equal;
 
 public final class Combinators {
     private Combinators() {}
-
+    
     /**
-     * Match a single token
-     * @param <Token> the type of tokens
-     * @param token the token to match
-     * @return a parser that matches a single token
-     */
+    * Match a single token
+    * @param <Token> the type of tokens
+    * @param token the token to match
+    * @return a parser that matches a single token
+    */
     public static <Token> Parser<Token, Token> one(final Token token){
         return new Parser<Token, Token>() {
             public Token parse(Context<Token> context) throws ParseException {
@@ -41,16 +41,21 @@ public final class Combinators {
                 }
                 
             }
+            
+            @Override
+            public String toString() {
+                return "One(" + token + ")";
+            }
         };
     }
-
+    
     /**
-     * Matches any of the given parsers.
-     * @param <Token> the type of tokens
-     * @param <Match> the type of matches
-     * @param parsers the parsers to try
-     * @return a parser that matches any of the given parsers
-     */
+    * Matches any of the given parsers.
+    * @param <Token> the type of tokens
+    * @param <Match> the type of matches
+    * @param parsers the parsers to try
+    * @return a parser that matches any of the given parsers
+    */
     public static <Token, Match> Parser<Token, Match> or(final Parser<Token, ? extends Match>... parsers) {
         return new Parser<Token,Match>() {
             public Match parse(Context<Token> context) throws ParseException {
@@ -69,16 +74,30 @@ public final class Combinators {
                 }
                 throw new MultiParseException(context, exceptions);
             }
+            
+            @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Or(");
+                for (int i = 0; i < parsers.length; i++) {
+                    sb.append(parsers[i]);
+                    if (i < parsers.length - 1) {
+                        sb.append(", ");
+                    }
+                }
+                sb.append(")");
+                return sb.toString();
+            }
         };
     }
-
+    
     /**
-     * Optional parser returns Optional.None if the parser fails.
-     * @param <Token> the type of tokens
-     * @param <Match> the type of matches
-     * @param parser the parser to try
-     * @return a parser that returns Optional.None if the parser fails
-     */
+    * Optional parser returns Optional.None if the parser fails.
+    * @param <Token> the type of tokens
+    * @param <Match> the type of matches
+    * @param parser the parser to try
+    * @return a parser that returns Optional.None if the parser fails
+    */
     public static <Token, Match> Parser<Token, Optional<Match>> optional(final Parser<Token, Match> parser) {
         return new Parser<Token, Optional<Match>>() {
             public Optional<Match> parse(Context<Token> context) throws ParseException {
@@ -93,33 +112,43 @@ public final class Combinators {
                     throw new ParseException(context, "Exception while reading optional", e);
                 }
             }
+
+            @Override
+            public String toString() {
+                return "Optional(" + parser + ")";
+            }
         };
     }
-
+    
     /**
-     * Create a parser that maps the output of a parser
-     * @param <Token> the type of tokens
-     * @param <Match1> the type of the output of the parser
-     * @param <Match2> the type of the output of the function
-     * @param parser the parser to map
-     * @param function the function to apply
-     * @return a parser that maps the output of a parser
-     */
+    * Create a parser that maps the output of a parser
+    * @param <Token> the type of tokens
+    * @param <Match1> the type of the output of the parser
+    * @param <Match2> the type of the output of the function
+    * @param parser the parser to map
+    * @param function the function to apply
+    * @return a parser that maps the output of a parser
+    */
     public static <Token, Match1, Match2> Parser<Token, Match2> map(final Parser<Token, Match1> parser, final Function<? super Match1, Match2> function) {
         return new Parser<Token, Match2>() {
             public Match2 parse(Context<Token> context) throws ParseException {
                 return function.invoke(parser.parse(context));
             }
+
+            @Override
+            public String toString() {
+                return "Map(" + parser + ", " + function + ")";
+            }
         };
     }
-
+    
     /**
-     * Match the given parser as many times as possible
-     * @param <Token> the type of tokens
-     * @param <Match> the type of matches
-     * @param parser the parser to match
-     * @return A parser that matches the given parser as many times as possible
-     */
+    * Match the given parser as many times as possible
+    * @param <Token> the type of tokens
+    * @param <Match> the type of matches
+    * @param parser the parser to match
+    * @return A parser that matches the given parser as many times as possible
+    */
     public static <Token, Match> Parser<Token, List<Match>> many(final Parser<Token, Match> parser) {
         return new Parser<Token, List<Match>>() {
             public List<Match> parse(Context<Token> context) throws ParseException {
@@ -139,14 +168,19 @@ public final class Combinators {
                 }
                 return matches;
             }
+
+            @Override
+            public String toString() {
+                return "Many(" + parser + ")";
+            }
         };
     }
-
+    
     /**
-     * Match any token
-     * @param <Token> the type of tokens
-     * @return a parser that matches any token
-     */
+    * Match any token
+    * @param <Token> the type of tokens
+    * @return a parser that matches any token
+    */
     public static <Token> Parser<Token, Token> any() {
         return new Parser<Token, Token>() {
             public Token parse(Context<Token> context) throws ParseException {
@@ -162,18 +196,23 @@ public final class Combinators {
                     throw new ParseException(context, "Unreachable", e);
                 }
             }
+
+            @Override
+            public String toString() {
+                return "Any";
+            }
         };
     }
-
+    
     /**
-     * Fold the output of a parser into a single value
-     * @param <Token> the type of tokens
-     * @param <Match> the type of matches
-     * @param parser the parser to fold
-     * @param init the initial value
-     * @param function the function to fold with
-     * @return a parser that folds the output of a parser into a single value
-     */
+    * Fold the output of a parser into a single value
+    * @param <Token> the type of tokens
+    * @param <Match> the type of matches
+    * @param parser the parser to fold
+    * @param init the initial value
+    * @param function the function to fold with
+    * @return a parser that folds the output of a parser into a single value
+    */
     public static <Token, Match> Parser<Token, Match> fold(final Parser<Token, ? extends Collection<Match>> parser, final Match init, final BiFunction<Match, Match, Match> function) {
         return new Parser<Token, Match>() {
             public Match parse(Context<Token> context) throws ParseException {
@@ -183,15 +222,20 @@ public final class Combinators {
                 }
                 return result;
             }
+
+            @Override
+            public String toString() {
+                return "Fold(" + parser + ", " + init + ", " + function + ")";
+            }
         };
     }
-
+    
     /**
-     * Match the next token if the given parser does not match
-     * @param <Token> the type of tokens
-     * @param parser the parser to not match
-     * @return a parser that matches the next token if the given parser does not match
-     */
+    * Match the next token if the given parser does not match
+    * @param <Token> the type of tokens
+    * @param parser the parser to not match
+    * @return a parser that matches the next token if the given parser does not match
+    */
     public static <Token> Parser<Token, Token> not(final Parser<Token, ?> parser){
         return new Parser<Token, Token>() {
             public Token parse(Context<Token> context) throws ParseException {
@@ -210,16 +254,21 @@ public final class Combinators {
                 }
                 throw new ParseException(context, "Expected not to match " + value);
             }
+
+            @Override
+            public String toString() {
+                return "Not(" + parser + ")";
+            }
         };
     }
-
+    
     /**
-     * Matches a sequence of parsers
-     * @param <Token> the type of tokens
-     * @param <Match> the type of matches
-     * @param parsers the parsers to match
-     * @return a parser that matches a sequence of parsers
-     */
+    * Matches a sequence of parsers
+    * @param <Token> the type of tokens
+    * @param <Match> the type of matches
+    * @param parsers the parsers to match
+    * @return a parser that matches a sequence of parsers
+    */
     public static <Token, Match> Parser<Token, List<Match>> seq(final Parser<Token, Match>... parsers) {
         return new Parser<Token, List<Match>>() {
             public List<Match> parse(Context<Token> context) throws ParseException {
@@ -229,17 +278,31 @@ public final class Combinators {
                 }
                 return matches;
             }
+
+            @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Seq(");
+                for (int i = 0; i < parsers.length; i++) {
+                    sb.append(parsers[i]);
+                    if (i < parsers.length - 1) {
+                        sb.append(", ");
+                    }
+                }
+                sb.append(")");
+                return sb.toString();
+            }
         };
     }
-
+    
     /**
-     * Match the given parser n times
-     * @param <Token> the type of tokens
-     * @param <Match> the type of matches
-     * @param n the number of times to match
-     * @param parser the parser to match
-     * @return a parser that matches the given parser n times
-     */
+    * Match the given parser n times
+    * @param <Token> the type of tokens
+    * @param <Match> the type of matches
+    * @param n the number of times to match
+    * @param parser the parser to match
+    * @return a parser that matches the given parser n times
+    */
     public static <Token, Match> Parser<Token, List<Match>> repN(final int n, final Parser<Token, Match> parser){
         return new Parser<Token, List<Match>>() {
             public List<Match> parse(Context<Token> context) throws ParseException {
@@ -249,22 +312,32 @@ public final class Combinators {
                 }
                 return matches;
             }
+
+            @Override
+            public String toString() {
+                return "RepN(" + n + ", " + parser + ")";
+            }
         };
     }
-
+    
     /**
-     * Returns the output of the parser or the value from the supplier
-     * @param <Token> the type of tokens
-     * @param <Match> the type of matches
-     * @param parser the parser to try
-     * @param s the supplier to use if the parser returns None
-     * @return a parser that returns the output of the parser or the value from the supplier
-     */
+    * Returns the output of the parser or the value from the supplier
+    * @param <Token> the type of tokens
+    * @param <Match> the type of matches
+    * @param parser the parser to try
+    * @param s the supplier to use if the parser returns None
+    * @return a parser that returns the output of the parser or the value from the supplier
+    */
     public static <Token, Match> Parser<Token, Match> optionOr(final Parser<Token, Optional<Match>> parser, final Supplier<Match> s){
         return new Parser<Token, Match>() {
             public Match parse(Context<Token> context) throws ParseException {
                 Optional<Match> opt = parser.parse(context);
                 return opt.or(s.invoke());
+            }
+
+            @Override
+            public String toString() {
+                return "OptionOr(" + parser + ", " + s + ")";
             }
         };
     }
