@@ -19,9 +19,9 @@ public class ParsedStream<TToken, TMatch> extends InputStreamOf<TMatch> {
      * @param parser the parser to use
      * @param input the input to parse
      */
-    public ParsedStream(Parser<TToken, TMatch> parser, InputStreamOf<TToken> input) {
+    public ParsedStream(Parser<TToken, TMatch> parser, Context<TToken> context) {
         this.parser = parser;
-        this.context = new StreamContext<TToken>(input);
+        this.context = context;
     }
 
     /**
