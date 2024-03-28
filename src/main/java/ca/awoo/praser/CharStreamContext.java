@@ -50,5 +50,10 @@ public class CharStreamContext implements Context<Character> {
     public long getOffset() {
         return offset;
     }
+
+    @Override
+    public String toString() {
+        return "L" + line + "C" + column + "O" + offset;
+    }
     
 }
