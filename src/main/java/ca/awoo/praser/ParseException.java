@@ -51,4 +51,12 @@ public class ParseException extends Exception {
     public Context<?> getContext() {
         return context;
     }
+
+    /**
+     * Gets the offset of the context.
+     * @return the offset of the context
+     */
+    public long getOffset(){
+        return context.getOffset();
+    }
 }

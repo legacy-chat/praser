@@ -32,10 +32,13 @@ public class MultiParseException extends ParseException {
         return depth;
     }
 
-    private static Throwable getDeepestThrowable(List<? extends Throwable> causes){
-        Throwable deepest = causes.get(0);
-        for(Throwable cause : causes){
-            if(getThrowableDepth(cause) > getThrowableDepth(deepest)){
+    private static Throwable getDeepestThrowable(List<ParseException> causes){
+        ParseException deepest = causes.get(0);
+        for(ParseException cause : causes){
+            /*if(getThrowableDepth(cause) > getThrowableDepth(deepest)){
+                deepest = cause;
+            }*/
+            if(cause.getOffset() > deepest.getOffset()){
                 deepest = cause;
             }
         }
