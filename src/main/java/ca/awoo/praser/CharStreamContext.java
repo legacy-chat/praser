@@ -53,7 +53,7 @@ public class CharStreamContext implements Context<Character> {
 
     @Override
     public String toString() {
-        return "L" + line + "C" + column + "O" + offset;
+        return "CharStreamContext@" + offset + "(line " + line + ", column " + column + ")";
     }
     
 }

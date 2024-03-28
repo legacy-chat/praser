@@ -48,6 +48,6 @@ public class FilterContext<T> implements Context<T> {
     
     @Override
     public String toString(){
-        return "Filtering at offset " + offset + " in " + parentContext.toString() + " using " + filter.toString();
+        return "FilterContext(" + parentContext.toString() + ", " + filter.toString() + ")@" + offset;
     }
 }

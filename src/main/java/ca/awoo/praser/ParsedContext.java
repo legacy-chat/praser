@@ -46,7 +46,7 @@ public class ParsedContext<Token, Match> implements Context<Match> {
 
     @Override
     public String toString(){
-        return "Parsing at offset " + offset + " in " + parentContext.toString() + " using " + parser.toString();
+        return "ParsedContext(" + parentContext.toString() + ", " + parser.toString() + ")@" + offset;
     }
 
 }
