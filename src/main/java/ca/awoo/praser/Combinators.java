@@ -195,10 +195,10 @@ public final class Combinators {
     public static <Token> Parser<Token, Token> not(final Parser<Token, ?> parser){
         return new Parser<Token, Token>() {
             public Token parse(Context<Token> context) throws ParseException {
+                Object value;
                 try {
                     Context<Token> clone = context.clone();
-                    parser.parse(clone);
-                    throw new ParseException(context, "Expected not to match " + parser.parse(context));
+                    value = parser.parse(clone);
                 } catch (ParseException e) {
                     try{
                         return context.next().get();
@@ -208,6 +208,7 @@ public final class Combinators {
                         throw new ParseException(context, "Exception while reading stream", ex);
                     }
                 }
+                throw new ParseException(context, "Expected not to match " + value);
             }
         };
     }

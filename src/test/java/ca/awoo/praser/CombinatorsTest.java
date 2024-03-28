@@ -26,6 +26,17 @@ public class CombinatorsTest {
         assertEquals((Integer)3, Combinators.one(3).parse(context));
     }
 
+    @Test
+    public void oneFailTest() throws Exception{
+        Context<Integer> context = createContext(1, 2, 3);
+        try{
+            Combinators.one(4).parse(context);
+            fail("Expected exception");
+        }catch(ParseException e){
+
+        }
+    }
+
     @SuppressWarnings("unchecked")
     @Test
     public void orTest() throws Exception{
@@ -90,5 +101,18 @@ public class CombinatorsTest {
             }
         });
         assertEquals((Integer)6, parser.parse(context));
+    }
+
+    @Test
+    public void notTest() throws Exception{
+        Context<Integer> context = createContext(1, 2, 3);
+        Parser<Integer, Integer> parser = Combinators.not(Combinators.one(3));
+        assertEquals((Integer)1, parser.parse(context));
+        assertEquals((Integer)2, parser.parse(context));
+        try{
+            int value = parser.parse(context);
+            fail("Expected exception, got: " + value);
+        }catch(ParseException e){
+        }
     }
 }
