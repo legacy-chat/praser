@@ -51,11 +51,11 @@ public final class Combinators {
      * @param parsers the parsers to try
      * @return a parser that matches any of the given parsers
      */
-    public static <Token, Match> Parser<Token, Match> or(final Parser<Token, Match>... parsers) {
+    public static <Token, Match> Parser<Token, Match> or(final Parser<Token, ? extends Match>... parsers) {
         return new Parser<Token,Match>() {
             public Match parse(Context<Token> context) throws ParseException {
                 List<ParseException> exceptions = new ArrayList<ParseException>();
-                for (Parser<Token, Match> parser : parsers) {
+                for (Parser<Token, ? extends Match> parser : parsers) {
                     try {
                         Context<Token> clone = context.clone();
                         Match match = parser.parse(clone);
