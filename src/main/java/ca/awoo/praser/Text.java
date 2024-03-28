@@ -109,6 +109,20 @@ public final class Text {
         };
     }
 
+    /**
+     * Converts a parser that returns a character into a parser that returns a string
+     * @param <Token> The token type
+     * @param parser The parser that returns a character
+     * @return A parser that returns a string
+     */
+    public static <Token> Parser<Token, String> charToString(Parser<Token, Character> parser){
+        return map(parser, new Function<Character, String>(){
+            public String invoke(Character c){
+                return c.toString();
+            }
+        });
+    }
+
     public static Parser<Character, Character> whitespace(){
         return oneOf(" \n\r\t");
     }
