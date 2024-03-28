@@ -8,6 +8,7 @@ import ca.awoo.fwoabl.Optional;
 import ca.awoo.fwoabl.OptionalNoneException;
 import ca.awoo.fwoabl.function.BiFunction;
 import ca.awoo.fwoabl.function.Function;
+import ca.awoo.fwoabl.function.Supplier;
 
 import static ca.awoo.fwoabl.function.Functions.equal;
 
@@ -246,6 +247,23 @@ public final class Combinators {
                     matches.add(parser.parse(context));
                 }
                 return matches;
+            }
+        };
+    }
+
+    /**
+     * Returns the output of the parser or the value from the supplier
+     * @param <Token> the type of tokens
+     * @param <Match> the type of matches
+     * @param parser the parser to try
+     * @param s the supplier to use if the parser returns None
+     * @return a parser that returns the output of the parser or the value from the supplier
+     */
+    public static <Token, Match> Parser<Token, Match> optionOr(final Parser<Token, Optional<Match>> parser, final Supplier<Match> s){
+        return new Parser<Token, Match>() {
+            public Match parse(Context<Token> context) throws ParseException {
+                Optional<Match> opt = parser.parse(context);
+                return opt.or(s.invoke());
             }
         };
     }
