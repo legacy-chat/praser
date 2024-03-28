@@ -17,8 +17,8 @@ import static ca.awoo.fwoabl.function.Functions.equal;
 public final class Text {
     private Text(){}
 
-    public static CharStreamContext contextFromStream(final InputStream is, final Charset cs){
-        return new CharStreamContext(new InputStreamOf<Character>(){
+    public static InputStreamOf<Character> characterStream(final InputStream is, final Charset cs){
+        return new InputStreamOf<Character>(){
             @SuppressWarnings("resource")
             private final InputStreamReader reader = new InputStreamReader(is, cs);
 
@@ -39,7 +39,11 @@ public final class Text {
             public void close() throws IOException {
                 reader.close();
             }
-        });
+        };
+    }
+
+    public static CharStreamContext contextFromStream(final InputStream is, final Charset cs){
+        return new CharStreamContext(characterStream(is, cs));
     }
 
     public static <Token> Parser<Token, String> stringFold(final Parser<Token, ? extends Collection<Character>> parser){
