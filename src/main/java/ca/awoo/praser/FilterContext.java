@@ -25,7 +25,7 @@ public class FilterContext<T> implements Context<T> {
 
     public Optional<T> next() throws StreamException {
         Optional<T> next = parentContext.next();
-        while (next.isSome() && next.test(filter)) {
+        while (next.isSome() && !next.test(filter)) {
             next = parentContext.next();
         }
         offset++;
